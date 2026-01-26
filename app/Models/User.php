@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Notifications\ResetPasswordNotification;
 
 /**
  * @property int $id
@@ -32,6 +33,9 @@ class User extends Authenticatable
         'password',
         'role',
         'is_approved',
+        'otp',
+        'otp_expires_at',
+        'email_verified',
     ];
 
     /**
@@ -55,6 +59,19 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_approved' => 'boolean',
+            'otp_expires_at' => 'datetime',
+            'email_verified' => 'boolean',
         ];
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param string $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

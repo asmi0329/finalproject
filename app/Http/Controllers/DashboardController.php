@@ -11,6 +11,71 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
+    public function fuelLpg()
+    {
+        $location = request('location');
+        
+        $fuelQuery = FuelPrice::whereIn('id', function ($query) use ($location) {
+            $q = $query->selectRaw('max(id)')->from('fuel_prices')->groupBy('product', 'region');
+            if ($location)
+                $q->where('region', 'like', "%{$location}%");
+        })->get();
+
+        return view('dashboard.fuel-lpg', [
+            'fuelPrices' => $fuelQuery,
+            'searchLocation' => $location
+        ]);
+    }
+
+    public function foreignExchange()
+    {
+        $fxRates = FxRate::whereIn('id', function ($query) {
+            $query->selectRaw('max(id)')->from('fx_rates')->where('target_currency', 'NPR')->groupBy('base_currency');
+        })->get();
+
+        return view('dashboard.foreign-exchange', [
+            'fxRates' => $fxRates
+        ]);
+    }
+
+    public function metalPrices()
+    {
+        $metalPrices = MetalPrice::whereIn('id', function ($query) {
+            $query->selectRaw('max(id)')->from('metal_prices')->groupBy('metal_type');
+        })->get();
+
+        return view('dashboard.metal-prices', [
+            'metalPrices' => $metalPrices
+        ]);
+    }
+
+    public function weatherData()
+    {
+        $location = request('location');
+        
+        $weatherSnapshots = WeatherSnapshot::whereIn('id', function ($query) use ($location) {
+            $q = $query->selectRaw('max(id)')->from('weather_snapshots')->groupBy('location');
+            if ($location)
+                $q->where('location', 'like', "%{$location}%");
+        })->get();
+
+        return view('dashboard.weather-data', [
+            'weatherSnapshots' => $weatherSnapshots,
+            'searchLocation' => $location
+        ]);
+    }
+
+    public function electricityTariffs()
+    {
+        $electricityTariffs = ElectricityTariff::whereIn('id', function ($query) {
+            $query->selectRaw('max(id)')->from('electricity_tariffs')->groupBy('category', 'slab');
+        })->get();
+
+        return view('dashboard.electricity-tariffs', [
+            'electricityTariffs' => $electricityTariffs
+        ]);
+    }
+
     public function index()
     {
         $location = request('location');

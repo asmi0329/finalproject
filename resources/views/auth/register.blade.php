@@ -13,7 +13,7 @@
         <div class="space-y-2">
             <x-input-label for="name" :value="__('Full Name')" />
             <x-text-input id="name" class="block w-full" type="text" name="name" :value="old('name')" required autofocus
-                autocomplete="name" placeholder="John Doe" />
+                autocomplete="name" placeholder="Radhe Radhe" />
             <x-input-error :messages="$errors->get('name')" class="mt-2 text-rose-600" />
         </div>
 

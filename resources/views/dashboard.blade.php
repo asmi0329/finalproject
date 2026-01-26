@@ -1,6 +1,8 @@
-<x-user-layout>
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<x-user-dashboard-layout>
+    @php
+        $pageTitle = 'Dashboard';
+        $pageDescription = 'Market rates and economic data overview';
+    @endphp
 
             <!-- Search Bar -->
             <div class="mb-8">
@@ -311,6 +313,120 @@
                     </div>
                 </div>
 
+                <!-- Electricity Tariffs -->
+                <div class="lg:col-span-2 mt-8">
+                    <h2 class="text-xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded bg-yellow-500 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        Electricity Tariffs
+                    </h2>
+                    <div class="admin-card overflow-hidden">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-50 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Category</th>
+                                    <th class="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Slab</th>
+                                    <th class="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Unit</th>
+                                    <th class="px-6 py-4 text-right text-[10px] font-black text-slate-500 uppercase tracking-widest">Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                @foreach($electricityTariffs->take(8) as $tariff)
+                                    <tr class="hover:bg-slate-50 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-3">
+                                                @php
+                                                    $category = strtolower($tariff->category ?? '');
+                                                    if (str_contains($category, 'residential') || str_contains($category, 'domestic')) {
+                                                        $color = 'from-blue-500 to-blue-600';
+                                                        $icon = '<svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>';
+                                                    } elseif (str_contains($category, 'commercial') || str_contains($category, 'business')) {
+                                                        $color = 'from-purple-500 to-purple-600';
+                                                        $icon = '<svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>';
+                                                    } elseif (str_contains($category, 'industrial')) {
+                                                        $color = 'from-orange-500 to-orange-600';
+                                                        $icon = '<svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>';
+                                                    } else {
+                                                        $color = 'from-slate-500 to-slate-600';
+                                                        $icon = '<svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>';
+                                                    }
+                                                @endphp
+                                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br {{ $color }} flex items-center justify-center shadow-sm">
+                                                    {!! $icon !!}
+                                                </div>
+                                                <div>
+                                                    <span class="font-bold text-slate-900 text-sm block">{{ ucfirst($tariff->category) }}</span>
+                                                    <span class="text-xs text-slate-500">{{ $tariff->consumer_type ?? 'Standard' }}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 text-slate-600 font-semibold text-sm">{{ $tariff->slab ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[9px] font-black rounded uppercase border border-slate-200">{{ $tariff->unit ?? 'kWh' }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-right font-black text-slate-900 text-sm">रु {{ number_format($tariff->rate ?? 0, 2) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Weather Snapshots -->
+                <div class="mt-8">
+                    <h2 class="text-xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded bg-sky-500 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                            </svg>
+                        </div>
+                        Weather Snapshots
+                    </h2>
+                    <div class="admin-card divide-y divide-slate-100">
+                        @foreach($weatherSnapshots->take(6) as $weather)
+                            <div class="px-6 py-4 flex justify-between items-center group hover:bg-sky-50 transition-all">
+                                <div class="flex items-center gap-3">
+                                    @php
+                                        $condition = strtolower($weather->condition ?? 'clear');
+                                        $isRainy = str_contains($condition, 'rain') || str_contains($condition, 'rainy');
+                                        $isCloudy = str_contains($condition, 'cloud') || str_contains($condition, 'overcast');
+                                        $isSunny = str_contains($condition, 'clear') || str_contains($condition, 'sunny');
+                                    @endphp
+                                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br 
+                                        {{ $isRainy ? 'from-sky-400 to-sky-600' : ($isCloudy ? 'from-slate-400 to-slate-600' : 'from-amber-400 to-orange-500') }} flex items-center justify-center shadow-sm">
+                                        @if($isRainy)
+                                            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z M8 19v2m8-2v2m-4-2v2" />
+                                            </svg>
+                                        @elseif($isCloudy)
+                                            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                                            </svg>
+                                        @else
+                                            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                                            </svg>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-900">{{ $weather->location }}</p>
+                                        <p class="text-xs text-slate-500">{{ ucfirst($weather->condition ?? 'Clear') }}</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-slate-900 font-black text-sm">{{ $weather->temperature_c ?? '--' }}°C</p>
+                                    @if($weather->humidity)
+                                        <p class="text-xs text-slate-500">{{ $weather->humidity }}% humidity</p>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
                 <!-- Petroleum Products Details -->
                 <div class="lg:col-span-3 mt-8">
                     <h2 class="text-xl font-black text-slate-900 mb-6 flex items-center gap-3">
@@ -415,4 +531,4 @@
             });
         </script>
     @endpush
-</x-user-layout>
+</x-user-dashboard-layout>

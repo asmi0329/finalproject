@@ -25,7 +25,7 @@
                     <div>
                         <label class="block text-[10px] uppercase tracking-widest text-slate-500 font-black mb-2">Legal
                             Full Name</label>
-                        <input type="text" name="name" value="{{ old('name') }}" placeholder="e.g. Adarsha Karki"
+                        <input type="text" name="name" value="{{ old('name') }}" placeholder="e.g. Asmita Giri"
                             class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all placeholder-slate-600"
                             required>
                         @error('name') <p class="mt-2 text-xs text-rose-500 font-bold">{{ $message }}</p> @enderror
